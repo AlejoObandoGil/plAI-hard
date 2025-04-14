@@ -20,11 +20,24 @@ export default defineConfigWithVueTs(
 
   pluginVue.configs['flat/essential'],
   vueTsConfigs.recommended,
-  
+
   {
     ...pluginVitest.configs.recommended,
     files: ['src/**/__tests__/*'],
   },
   ...pluginOxlint.configs['flat/recommended'],
   skipFormatting,
+
+  // Configuración personalizada
+  {
+    rules: {
+      // Permitir caracteres en español en strings
+      'no-unused-vars': ['error', { varsIgnorePattern: '^[A-Za-zÁ-Úá-úñÑ]+$' }],
+      // Permitir caracteres en español en nombres de variables
+      'id-match': ['error', '^[A-Za-zÁ-Úá-úñÑ][A-Za-z0-9Á-Úá-úñÑ]*$'],
+      // Desactivar reglas que puedan interferir con caracteres en español
+      'vue/multi-word-component-names': 'off',
+      'vue/no-reserved-component-names': 'off',
+    },
+  },
 )
