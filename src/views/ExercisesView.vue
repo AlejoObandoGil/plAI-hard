@@ -12,15 +12,6 @@
             class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
-        <select
-          v-model="selectedBodyPart"
-          class="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-        >
-          <option value="">Todas las partes del cuerpo</option>
-          <option v-for="bodyPart in bodyParts" :key="bodyPart" :value="bodyPart">
-            {{ bodyPart }}
-          </option>
-        </select>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -29,28 +20,40 @@
           :key="exercise.id"
           class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300"
         >
-          <img :src="exercise.gifUrl" :alt="exercise.name" class="w-full h-48 object-cover" />
+          <ExerciseGif
+            v-if="exercise.images && exercise.images.length > 0"
+            :images="exercise.images"
+            :alt="exercise.name"
+            :intervalMs="1500"
+          />
           <div class="p-4">
             <h2 class="text-xl font-semibold mb-2">{{ exercise.name }}</h2>
-            <div class="flex flex-col gap-2 text-gray-600">
-              <div class="flex items-center gap-2">
-                <span class="text-sm">Parte del cuerpo:</span>
-                <span class="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs">
-                  {{ exercise.bodyPart }}
-                </span>
-              </div>
-              <div class="flex items-center gap-2">
-                <span class="text-sm">Objetivo:</span>
-                <span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">
-                  {{ exercise.target }}
-                </span>
-              </div>
-              <div class="flex items-center gap-2">
-                <span class="text-sm">Equipo:</span>
-                <span class="px-2 py-1 bg-yellow-100 text-yellow-800 rounded-full text-xs">
-                  {{ exercise.equipment }}
-                </span>
-              </div>
+            <div class="flex flex-wrap gap-2 mb-2">
+              <span class="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs"
+                >Nivel: {{ exercise.level }}</span
+              >
+              <span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs"
+                >Fuerza: {{ exercise.force }}</span
+              >
+              <span class="px-2 py-1 bg-yellow-100 text-yellow-800 rounded-full text-xs"
+                >Equipo: {{ exercise.equipment }}</span
+              >
+              <span
+                v-if="exercise.mechanic"
+                class="px-2 py-1 bg-purple-100 text-purple-800 rounded-full text-xs"
+                >Mecánica: {{ exercise.mechanic }}</span
+              >
+              <span class="px-2 py-1 bg-gray-100 text-gray-800 rounded-full text-xs"
+                >Categoría: {{ exercise.category }}</span
+              >
+            </div>
+            <div class="mb-2">
+              <span class="font-semibold text-sm">Músculos principales:</span>
+              <span class="text-sm">{{ exercise.primaryMuscles.join(', ') }}</span>
+            </div>
+            <div v-if="exercise.secondaryMuscles.length > 0" class="mb-2">
+              <span class="font-semibold text-sm">Músculos secundarios:</span>
+              <span class="text-sm">{{ exercise.secondaryMuscles.join(', ') }}</span>
             </div>
             <router-link
               :to="{ name: 'exercise-details', params: { id: exercise.id } }"
@@ -89,23 +92,16 @@
 import { onMounted, ref, computed } from 'vue'
 import { useExerciseStore } from '../stores/exercise'
 import LoadingSpinner from '../components/LoadingSpinner.vue'
+import ExerciseGif from '../components/ExerciseGif.vue'
 
 const exerciseStore = useExerciseStore()
 
 const searchQuery = ref('')
-const selectedBodyPart = ref('')
-
-const bodyParts = computed(() => {
-  if (!exerciseStore.exercises.length) return []
-  return [...new Set(exerciseStore.exercises.map((e) => e.bodyPart))]
-})
 
 const filteredExercises = computed(() => {
-  console.log('Filtered exercises:', exerciseStore.exercises)
   return exerciseStore.exercises.filter((exercise) => {
     const matchesSearch = exercise.name.toLowerCase().includes(searchQuery.value.toLowerCase())
-    const matchesBodyPart = !selectedBodyPart.value || exercise.bodyPart === selectedBodyPart.value
-    return matchesSearch && matchesBodyPart
+    return matchesSearch
   })
 })
 
