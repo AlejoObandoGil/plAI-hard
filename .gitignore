@@ -30,3 +30,20 @@ coverage
 *.sw?
 
 *.tsbuildinfo
+
+# Node
+node_modules/
+
+# Build
+/dist
+
+# Env
+.env
+
+# Lockfiles
+package-lock.json
+
+# VSCode
+.vscode/
+.env
+.env
