@@ -1,9 +1,5 @@
 <template>
-  <img
-    :src="imageUrl"
-    :alt="alt"
-    class="w-full h-48 object-cover"
-  />
+  <img :src="imageUrl" :alt="alt" class="w-full h-48 object-cover" />
 </template>
 
 <script setup lang="ts">
@@ -16,12 +12,12 @@ const props = defineProps<{
 }>()
 
 const currentIndex = ref(0)
-const imageUrl = ref("")
+const imageUrl = ref('')
 let intervalId: number | null = null
 
 const updateImage = () => {
   if (props.images.length === 0) return
-  imageUrl.value = `/images/exercises/${props.images[currentIndex.value]}`
+  imageUrl.value = `${props.images[currentIndex.value]}`
 }
 
 onMounted(() => {
@@ -36,8 +32,11 @@ onBeforeUnmount(() => {
   if (intervalId) clearInterval(intervalId)
 })
 
-watch(() => props.images, () => {
-  currentIndex.value = 0
-  updateImage()
-})
+watch(
+  () => props.images,
+  () => {
+    currentIndex.value = 0
+    updateImage()
+  },
+)
 </script>

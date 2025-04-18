@@ -49,11 +49,19 @@
             </div>
             <div class="mb-2">
               <span class="font-semibold text-sm">Músculos principales:</span>
-              <span class="text-sm">{{ exercise.primaryMuscles.join(', ') }}</span>
+              <span class="text-sm">
+                <span v-for="pm in exercise.primaryMuscles" :key="pm.muscles?.name">
+                  {{ pm.muscles?.name }}<br />
+                </span>
+              </span>
             </div>
-            <div v-if="exercise.secondaryMuscles.length > 0" class="mb-2">
+            <div v-if="exercise.secondaryMuscles && exercise.secondaryMuscles.length > 0" class="mb-2">
               <span class="font-semibold text-sm">Músculos secundarios:</span>
-              <span class="text-sm">{{ exercise.secondaryMuscles.join(', ') }}</span>
+              <span class="text-sm">
+                <span v-for="sm in exercise.secondaryMuscles" :key="sm.muscles?.name">
+                  {{ sm.muscles?.name }}<br />
+                </span>
+              </span>
             </div>
             <router-link
               :to="{ name: 'exercise-details', params: { id: exercise.id } }"
@@ -74,12 +82,12 @@
       </div>
     </div>
 
-    <div v-if="exerciseStore.loading" class="flex justify-center items-center h-64">
+    <div v-if="exercisesStore.loading" class="flex justify-center items-center h-64">
       <LoadingSpinner />
     </div>
 
-    <div v-else-if="exerciseStore.error" class="text-red-500 text-center py-8">
-      <p>{{ exerciseStore.error }}</p>
+    <div v-else-if="exercisesStore.error" class="text-red-500 text-center py-8">
+      <p>{{ exercisesStore.error }}</p>
     </div>
 
     <div v-else-if="filteredExercises.length === 0" class="text-center py-8">
@@ -90,22 +98,22 @@
 
 <script setup lang="ts">
 import { onMounted, ref, computed } from 'vue'
-import { useExerciseStore } from '../stores/exercise'
+import { useExercisesStore } from '../stores/exercises'
 import LoadingSpinner from '../components/LoadingSpinner.vue'
 import ExerciseGif from '../components/ExerciseGif.vue'
 
-const exerciseStore = useExerciseStore()
+const exercisesStore = useExercisesStore()
 
 const searchQuery = ref('')
 
 const filteredExercises = computed(() => {
-  return exerciseStore.exercises.filter((exercise) => {
+  return exercisesStore.exercises.filter((exercise) => {
     const matchesSearch = exercise.name.toLowerCase().includes(searchQuery.value.toLowerCase())
     return matchesSearch
   })
 })
 
 onMounted(() => {
-  exerciseStore.fetchExercises()
+  exercisesStore.fetchExercises()
 })
 </script>
