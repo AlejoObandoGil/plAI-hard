@@ -1,9 +1,15 @@
 <script setup lang="ts">
-import { RouterView } from 'vue-router'
+import MainLayout from './layouts/MainLayout.vue'
 </script>
 
 <template>
-  <RouterView />
+  <MainLayout>
+    <router-view v-slot="{ Component }">
+      <transition name="fade" mode="out-in">
+        <component :is="Component" />
+      </transition>
+    </router-view>
+  </MainLayout>
 </template>
 
 <style scoped>
@@ -67,5 +73,15 @@ nav a:first-of-type {
     padding: 1rem 0;
     margin-top: 1rem;
   }
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
 }
 </style>

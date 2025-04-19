@@ -1,5 +1,5 @@
 <template>
-  <div class="container mx-auto px-4 py-8">
+  <div class="min-h-screen text-primary px-4 py-8">
     <div v-if="loading" class="text-center">
       <p>Cargando ejercicio...</p>
     </div>
@@ -8,35 +8,68 @@
       <p>{{ error }}</p>
     </div>
 
-    <div v-else-if="selectedExercise" class="max-w-2xl mx-auto">
-      <div class="bg-white rounded-lg shadow-md overflow-hidden">
-        <img
-          :src="selectedExercise.gifUrl"
-          :alt="selectedExercise.name"
-          class="w-full h-64 object-cover"
+    <div v-else-if="exercise" class="max-w-2xl mx-auto">
+      <div
+        class="card app-card overflow-hidden border border-accent-dark/60 rounded-xl shadow-soft bg-gradient-to-b from-accent-card/80 to-accent-dark/80 flex flex-col min-h-[420px]"
+      >
+        <ExerciseGif
+          v-if="exercise.images && exercise.images.length > 0"
+          :images="exercise.images"
+          :alt="exercise.name"
+          :intervalMs="1500"
         />
-        <div class="p-6">
-          <h1 class="text-3xl font-bold mb-4">{{ selectedExercise.name }}</h1>
+        <div class="p-6 flex flex-col flex-1">
+          <h1 class="mb-4">{{ exercise.name }}</h1>
 
           <div class="grid grid-cols-2 gap-4 mb-6">
             <div>
-              <h2 class="text-sm font-semibold text-gray-500">Parte del cuerpo</h2>
-              <p class="text-lg">{{ selectedExercise.bodyPart }}</p>
+              <h2 class="text-sm font-semibold text-primary/60">Nivel</h2>
+              <p class="text-lg">{{ exercise.level || 'N/A' }}</p>
             </div>
             <div>
-              <h2 class="text-sm font-semibold text-gray-500">Objetivo</h2>
-              <p class="text-lg">{{ selectedExercise.target }}</p>
+              <h2 class="text-sm font-semibold text-primary/60">Fuerza</h2>
+              <p class="text-lg">{{ exercise.force || 'N/A' }}</p>
             </div>
             <div>
-              <h2 class="text-sm font-semibold text-gray-500">Equipo</h2>
-              <p class="text-lg">{{ selectedExercise.equipment }}</p>
+              <h2 class="text-sm font-semibold text-primary/60">Equipo</h2>
+              <p class="text-lg">{{ exercise.equipment || 'N/A' }}</p>
+            </div>
+            <div>
+              <h2 class="text-sm font-semibold text-primary/60">Categoría</h2>
+              <p class="text-lg">{{ exercise.category || 'N/A' }}</p>
             </div>
           </div>
 
-          <button
-            @click="addToRoutine"
-            class="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition-colors"
+          <div class="mb-4">
+            <span class="font-semibold text-sm text-primary">Músculos principales:</span>
+            <span class="text-sm text-secondary">
+              <span v-for="pm in exercise.primaryMuscles" :key="pm.muscles?.name">
+                {{ pm.muscles?.name }}<br />
+              </span>
+            </span>
+          </div>
+          <div
+            v-if="exercise.secondaryMuscles && exercise.secondaryMuscles.length > 0"
+            class="mb-4"
           >
+            <span class="font-semibold text-sm text-info">Músculos secundarios:</span>
+            <span class="text-sm text-info/80">
+              <span v-for="sm in exercise.secondaryMuscles" :key="sm.muscles?.name">
+                {{ sm.muscles?.name }}<br />
+              </span>
+            </span>
+          </div>
+
+          <div v-if="exercise.instructions && exercise.instructions.length > 0" class="mb-4">
+            <h2 class="font-semibold text-sm mb-1 text-accent">Instrucciones:</h2>
+            <ol class="list-decimal ml-6 text-accent/80">
+              <li v-for="step in exercise.instructions" :key="step.step_number">
+                {{ step.instruction }}
+              </li>
+            </ol>
+          </div>
+
+          <button @click="addToRoutine" class="btn btn-secondary w-full mt-4">
             Agregar a mi rutina
           </button>
         </div>
@@ -50,37 +83,28 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, watch } from 'vue'
+import { onMounted, computed } from 'vue'
 import { useRoute } from 'vue-router'
-import { useExerciseStore } from '../stores/exercise'
-import { useRoutineStore } from '../stores/routine'
+import { useExercisesStore } from '../stores/exercises'
+import ExerciseGif from '../components/exercise/ExerciseGif.vue'
 
 const route = useRoute()
-const exerciseStore = useExerciseStore()
-const routineStore = useRoutineStore()
+const exercisesStore = useExercisesStore()
 
-const { selectedExercise, loading, error, getExerciseById } = exerciseStore
+const loading = computed(() => exercisesStore.loading)
+const error = computed(() => exercisesStore.error)
+const exercise = computed(() => {
+  return exercisesStore.exercises.find((e) => e.id === route.params.id)
+})
 
 const addToRoutine = () => {
-  if (selectedExercise) {
-    // For now we add to Monday by default
-    // Later we'll implement a day selector
-    routineStore.addExerciseToDay('Lunes', selectedExercise)
-  }
+  // Aquí puedes implementar la lógica para agregar el ejercicio a la rutina
+  alert('Próximamente: agregar a rutina')
 }
 
 onMounted(() => {
-  if (route.params.id) {
-    getExerciseById(route.params.id as string)
+  if (exercisesStore.exercises.length === 0) {
+    exercisesStore.fetchExercises()
   }
 })
-
-watch(
-  () => route.params.id,
-  (newId) => {
-    if (newId) {
-      getExerciseById(newId as string)
-    }
-  },
-)
 </script>

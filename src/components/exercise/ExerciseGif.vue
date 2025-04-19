@@ -1,5 +1,5 @@
 <template>
-  <img :src="imageUrl" :alt="alt" class="w-full h-48 object-cover" />
+  <img :src="imageUrl" :alt="alt" />
 </template>
 
 <script setup lang="ts">
