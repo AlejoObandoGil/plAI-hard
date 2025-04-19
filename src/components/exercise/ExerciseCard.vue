@@ -10,11 +10,34 @@
       class="w-full rounded-xl"
     />
     <div class="p-2 flex flex-col flex-1">
-      <h2 class="text-2xl font-bold mb-3 flex items-center gap-2 text-primary">
+      <h2 class="text-2xl font-bold mb-2 flex items-center gap-2 text-primary">
         {{ exercise.name }}
       </h2>
+      <div v-if="exercise.primaryMuscles && exercise.primaryMuscles.length" class="mb-1">
+        <span class="font-semibold text-sm text-primary">Músculos principales: </span>
+        <span class="text-sm">
+          {{
+            exercise.primaryMuscles
+              .map((pm) => pm.muscles?.name)
+              .filter(Boolean)
+              .join(', ')
+          }}
+        </span>
+      </div>
+      <div v-if="exercise.secondaryMuscles && exercise.secondaryMuscles.length" class="mb-4">
+        <span class="font-semibold text-sm text-info">Músculos secundarios: </span>
+        <span class="text-sm text-info/80">
+          {{
+            exercise.secondaryMuscles
+              .map((sm) => sm.muscles?.name)
+              .filter(Boolean)
+              .join(', ')
+          }}
+        </span>
+      </div>
+      <div v-else class="mb-4"></div>
       <div class="flex flex-col flex-1">
-        <div class="flex flex-wrap gap-2">
+        <div class="flex flex-wrap gap-2 mb-3">
           <span
             class="px-3 py-1 bg-secondary/10 text-secondary rounded-full text-xs font-semibold shadow"
             >Nivel: {{ exercise.level }}</span
@@ -37,29 +60,13 @@
             >Categoría: {{ exercise.category }}</span
           >
         </div>
-        <div>
-          <span class="font-semibold text-sm text-primary">Músculos principales: </span>
-          <span class="text-sm">
-            <span v-for="pm in exercise.primaryMuscles" :key="pm.muscles?.name">
-              {{ pm.muscles?.name }}<br />
-            </span>
-          </span>
-        </div>
-        <div v-if="exercise.secondaryMuscles && exercise.secondaryMuscles.length > 0">
-          <span class="font-semibold text-sm text-primary">Músculos secundarios: </span>
-          <span class="text-sm">
-            <span v-for="sm in exercise.secondaryMuscles" :key="sm.muscles?.name">
-              {{ sm.muscles?.name }}<br />
-            </span>
-          </span>
-        </div>
+        <router-link
+          :to="{ name: 'exercise-details', params: { id: exercise.id } }"
+          class="btn btn-primary mt-auto"
+        >
+          Ver detalles
+        </router-link>
       </div>
-      <router-link
-        :to="{ name: 'exercise-details', params: { id: exercise.id } }"
-        class="btn btn-primary mt-auto"
-      >
-        Ver detalles
-      </router-link>
     </div>
   </div>
 </template>

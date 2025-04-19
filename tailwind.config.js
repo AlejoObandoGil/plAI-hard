@@ -19,18 +19,23 @@ export default {
         },
         muted: {
           DEFAULT: '#A0A0A0',
+          dark: '#808080',
         },
         success: {
           DEFAULT: '#21D375',
+          dark: '#178a4d',
         },
         warning: {
           DEFAULT: '#FFB020',
+          dark: '#b27816',
         },
         error: {
           DEFAULT: '#FF4B4B',
+          dark: '#b22d2d',
         },
         info: {
           DEFAULT: '#38BDF8',
+          dark: '#157bb8',
         },
       },
       fontFamily: {
