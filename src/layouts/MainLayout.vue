@@ -4,10 +4,10 @@
     <header class="bg-accent-card text-accent p-4 shadow-soft md:hidden">
       <div class="flex justify-between items-center px-4">
         <h1 class="text-xl font-display">plAI Hard</h1>
-        <button @click="isMenuOpen = !isMenuOpen">
+        <button @click="isMobileSidebarOpen = true">
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
-              v-if="!isMenuOpen"
+              v-if="!isMobileSidebarOpen"
               stroke-linecap="round"
               stroke-linejoin="round"
               stroke-width="2"
@@ -102,13 +102,50 @@
       </div>
     </header>
 
+    <!-- Sidebar móvil -->
+    <transition name="slide">
+      <div
+        v-if="isMobileSidebarOpen"
+        class="fixed inset-0 z-50 bg-black/30 flex justify-end"
+        @click.self="isMobileSidebarOpen = false"
+      >
+        <div class="w-64 bg-accent-card h-full shadow-xl p-6 flex flex-col animate-slide-in-right">
+          <button class="self-end mb-6" @click="isMobileSidebarOpen = false">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </button>
+          <a
+            href="#"
+            class="block px-4 py-2 text-primary hover:bg-primary-light hover:text-secondary"
+            >Mi Perfil</a
+          >
+          <a
+            href="#"
+            class="block px-4 py-2 text-primary hover:bg-primary-light hover:text-secondary"
+            >Configuración</a
+          >
+          <a
+            href="#"
+            class="block px-4 py-2 text-primary hover:bg-primary-light hover:text-secondary"
+            >Cerrar Sesión</a
+          >
+        </div>
+      </div>
+    </transition>
+
     <!-- Main Content -->
     <main class="flex-1 px-4 pb-20 md:pb-4">
       <slot></slot>
     </main>
 
     <!-- Mobile Navigation -->
-    <nav class="fixed bottom-0 left-0 right-0 bg-primary text-accent md:hidden">
+    <nav class="fixed bottom-0 left-0 right-0 bg-accent-card text-accent md:hidden">
       <div class="flex justify-around items-center h-16">
         <router-link to="/" class="flex flex-col items-center p-2" active-class="text-secondary">
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -174,11 +211,24 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 
-const isMenuOpen = ref(false)
 const isProfileOpen = ref(false)
+const isMobileSidebarOpen = ref(false)
 </script>
 
 <style scoped>
+@keyframes slide-in-right {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+.animate-slide-in-right {
+  animation: slide-in-right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
 .router-link-active {
   @apply text-secondary;
 }
