@@ -11,11 +11,13 @@
 
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         <ExerciseCard
-          v-for="exercise in filteredExercises"
+          v-for="exercise in exercisesStore.exercises"
           :key="exercise.id"
           :exercise="exercise"
         />
       </div>
+
+      <div ref="loadMoreTrigger" class="h-10"></div>
 
       <div v-if="exercisesStore.loading" class="flex justify-center items-center h-64">
         <LoadingSpinner />
@@ -25,7 +27,7 @@
         <p>{{ exercisesStore.error }}</p>
       </div>
 
-      <div v-else-if="filteredExercises.length === 0" class="text-center py-8">
+      <div v-else-if="exercisesStore.exercises.length === 0" class="text-center py-8">
         <p class="text-gray-600">No se encontraron ejercicios que coincidan con tu búsqueda</p>
       </div>
     </div>
@@ -33,7 +35,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, computed } from 'vue'
+import { onMounted, ref, onUnmounted, watch } from 'vue'
 import ExerciseSearch from '@/components/exercise/ExerciseSearch.vue'
 import ExerciseCard from '@/components/exercise/ExerciseCard.vue'
 import LoadingSpinner from '../components/LoadingSpinner.vue'
@@ -41,21 +43,40 @@ import { useExercisesStore } from '../stores/exercises'
 
 const exercisesStore = useExercisesStore()
 const searchQuery = ref('')
+const loadMoreTrigger = ref<HTMLElement | null>(null)
+let observer: IntersectionObserver | null = null
+let debounceTimeout: ReturnType<typeof setTimeout> | null = null
 
-const filteredExercises = computed(() => {
-  if (!searchQuery.value) return exercisesStore.exercises
-  const q = searchQuery.value.toLowerCase()
-  return exercisesStore.exercises.filter(
-    (e) =>
-      e.name.toLowerCase().includes(q) ||
-      e.category?.toLowerCase().includes(q) ||
-      e.force?.toLowerCase().includes(q) ||
-      e.level?.toLowerCase().includes(q) ||
-      e.equipment?.toLowerCase().includes(q),
-  )
-})
+async function loadMore() {
+  if (!exercisesStore.loading && exercisesStore.hasMore) {
+    await exercisesStore.fetchExercises(false, searchQuery.value)
+  }
+}
 
 onMounted(() => {
-  exercisesStore.fetchExercises()
+  exercisesStore.fetchExercises(true, searchQuery.value)
+
+  observer = new IntersectionObserver((entries) => {
+    if (entries[0].isIntersecting) {
+      loadMore()
+    }
+  }, { threshold: 1 })
+
+  if (loadMoreTrigger.value) {
+    observer.observe(loadMoreTrigger.value)
+  }
+})
+
+onUnmounted(() => {
+  if (observer && loadMoreTrigger.value) {
+    observer.unobserve(loadMoreTrigger.value)
+  }
+})
+
+watch(searchQuery, (newVal) => {
+  if (debounceTimeout) clearTimeout(debounceTimeout)
+  debounceTimeout = setTimeout(() => {
+    exercisesStore.fetchExercises(true, newVal)
+  }, 400)
 })
 </script>

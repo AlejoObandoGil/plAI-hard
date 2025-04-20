@@ -16,23 +16,13 @@
       <div v-if="exercise.primaryMuscles && exercise.primaryMuscles.length" class="mb-1">
         <span class="font-semibold text-sm text-primary">Músculos principales: </span>
         <span class="text-sm">
-          {{
-            exercise.primaryMuscles
-              .map((pm) => pm.muscles?.name)
-              .filter(Boolean)
-              .join(', ')
-          }}
+          {{ exercise.primaryMuscles.join(', ') }}
         </span>
       </div>
       <div v-if="exercise.secondaryMuscles && exercise.secondaryMuscles.length" class="mb-4">
         <span class="font-semibold text-sm text-info">Músculos secundarios: </span>
         <span class="text-sm text-info/80">
-          {{
-            exercise.secondaryMuscles
-              .map((sm) => sm.muscles?.name)
-              .filter(Boolean)
-              .join(', ')
-          }}
+          {{ exercise.secondaryMuscles.join(', ') }}
         </span>
       </div>
       <div v-else class="mb-4"></div>
@@ -73,8 +63,12 @@
 
 <script setup lang="ts">
 import ExerciseGif from './ExerciseGif.vue'
+import { defineProps } from 'vue'
 
-defineProps<{
-  exercise: any
-}>()
+const props = defineProps({
+  exercise: {
+    type: Object,
+    required: true
+  }
+})
 </script>
