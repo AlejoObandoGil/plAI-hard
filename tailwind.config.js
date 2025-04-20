@@ -45,14 +45,43 @@ export default {
       spacing: {
         18: '4.5rem',
         22: '5.5rem',
+        30: '7.5rem',
+        36: '9rem',
       },
       borderRadius: {
         xl: '1rem',
         '2xl': '1.5rem',
+        '3xl': '2rem',
+        '4xl': '2.5rem',
         full: '9999px',
       },
       boxShadow: {
         soft: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+        strong: '0 8px 24px 0 rgba(34, 211, 169, 0.15)',
+        inner: 'inset 0 2px 4px 0 rgba(0,0,0,0.06)',
+      },
+      fontSize: {
+        'xxs': '0.65rem',
+        'tiny': '0.8rem',
+        '7xl': '5rem',
+      },
+      zIndex: {
+        60: '60',
+        70: '70',
+        100: '100',
+      },
+      maxWidth: {
+        'xs': '20rem',
+        '3xl': '48rem',
+        'screen-xl': '1280px',
+      },
+      minHeight: {
+        'screen-75': '75vh',
+      },
+      transitionDuration: {
+        0: '0ms',
+        400: '400ms',
+        600: '600ms',
       },
     },
   },
