@@ -88,12 +88,44 @@
   }
 
   .card {
-    /* Fondo degradado sutil para cards */
     background: linear-gradient(120deg, #23272f 60%, #1a2233 100%);
     @apply border border-accent-dark/60 rounded-xl shadow-soft p-6;
     transition:
       box-shadow 0.2s,
       transform 0.2s;
+  }
+
+  .input-select {
+    @apply w-full appearance-none bg-accent-card border border-primary/40 text-primary placeholder:text-muted focus:ring-2 focus:ring-primary focus:border-primary rounded-lg py-2 px-3 pr-8 transition shadow-sm hover:border-primary/80;
+  }
+  .input-select option {
+    @apply bg-accent-card text-primary;
+  }
+
+  .input-checkbox {
+    @apply accent-primary rounded focus:ring-2 focus:ring-primary/60 border-primary/40 bg-accent-card;
+  }
+
+  .select-arrow {
+    @apply pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-primary text-lg;
+  }
+
+  /* Scrollbar personalizado para sidebar de filtros */
+  .custom-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: #3b82f6 #23272f;
+  }
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 8px;
+    background: #23272f;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #3b82f6;
+    border-radius: 8px;
+    border: 2px solid #23272f;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #2563eb;
   }
 }
 

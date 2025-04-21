@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import { ref, reactive } from 'vue'
 import { supabase } from '../services/supabase'
 
 const SUPABASE_BUCKET = 'gym-app' // Cambia si tu bucket tiene otro nombre
@@ -22,12 +22,22 @@ export interface Exercise {
   images: string[]
 }
 
+export const filters = reactive({
+  level: null as string | null,
+  force: null as string | null,
+  mechanic: null as string | null,
+  equipment: null as string | null,
+  category: null as string | null,
+  primaryMuscles: [] as string[],
+  secondaryMuscles: [] as string[],
+})
+
 export const useExercisesStore = defineStore('exercises', () => {
   const exercises = ref<Exercise[]>([])
   const loading = ref(false)
   const error = ref<string | null>(null)
   const page = ref(0)
-  const limit = ref(12)
+  const limit = ref(15)
   const hasMore = ref(true)
   const search = ref('')
 
@@ -50,10 +60,18 @@ export const useExercisesStore = defineStore('exercises', () => {
       .range(from, to)
 
     if (search.value) {
-      query = query.or(
-        `name.ilike.%${search.value}%,primary_muscles_str.ilike.%${search.value}%,secondary_muscles_str.ilike.%${search.value}%`,
-      )
+      query = query.or(`name.ilike.%${search.value}%,primary_muscles_str.ilike.%${search.value}%`)
     }
+
+    if (filters.level) query = query.eq('level', filters.level)
+    if (filters.force) query = query.eq('force', filters.force)
+    if (filters.mechanic) query = query.eq('mechanic', filters.mechanic)
+    if (filters.equipment) query = query.eq('equipment', filters.equipment)
+    if (filters.category) query = query.eq('category', filters.category)
+    if (filters.primaryMuscles.length)
+      query = query.contains('primary_muscles', filters.primaryMuscles)
+    if (filters.secondaryMuscles.length)
+      query = query.contains('secondary_muscles', filters.secondaryMuscles)
 
     const { data, error: err } = await query
     if (err) {
@@ -96,5 +114,5 @@ export const useExercisesStore = defineStore('exercises', () => {
     search.value = ''
   }
 
-  return { exercises, loading, error, fetchExercises, hasMore, resetExercises, search }
+  return { exercises, loading, error, fetchExercises, hasMore, resetExercises, search, filters }
 })
