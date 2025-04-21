@@ -1,6 +1,8 @@
 <template>
   <!-- Desktop Sidebar -->
-  <aside class="hidden lg:block w-72 shrink-0 bg-accent-card rounded-xl shadow p-4 h-fit sticky top-8">
+  <aside
+    class="hidden lg:block w-72 shrink-0 bg-accent-card rounded-xl shadow p-4 h-fit sticky top-8"
+  >
     <h2 class="font-bold mb-4 text-lg">Filtros</h2>
     <ExerciseFiltersForm :filters="filters" @reset="onReset" />
   </aside>

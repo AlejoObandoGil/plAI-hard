@@ -1,6 +1,6 @@
 <template>
   <div
-    class="card hover:scale-105 hover:shadow-2xl transition-all duration-300 border border-accent-dark/60 flex flex-col h-full min-h-[540px]"
+    class="card card-animate-pop card-hover-effect border border-accent-dark/60 flex flex-col h-full min-h-[500px]"
   >
     <ExerciseGif
       v-if="exercise.images && exercise.images.length > 0"
@@ -68,7 +68,7 @@ import { defineProps } from 'vue'
 const props = defineProps({
   exercise: {
     type: Object,
-    required: true
-  }
+    required: true,
+  },
 })
 </script>

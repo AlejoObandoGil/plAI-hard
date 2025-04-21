@@ -1,13 +1,15 @@
 <template>
   <div class="min-h-screen text-primary px-4 py-8">
-    <div class="container mx-auto px-4 py-8 flex flex-col lg:flex-row gap-8">
+    <div class="container mx-auto px-4 py-4 flex flex-col lg:flex-row gap-5">
       <!-- Sidebar filtros desktop / Drawer mobile -->
-      <aside class="hidden lg:block w-full max-w-xs sticky top-8 self-start z-10 max-h-[calc(100vh-4rem)] overflow-y-auto custom-scrollbar">
+      <aside
+        class="hidden lg:block w-full max-w-xs sticky top-8 self-start z-10 max-h-[calc(100vh-4rem)] overflow-y-auto custom-scrollbar"
+      >
         <ExerciseFilters ref="filterDrawer" />
       </aside>
 
       <div class="flex-1">
-        <div class="flex flex-col sm:flex-row sm:items-center gap-4 mb-6">
+        <div class="flex flex-col sm:flex-row sm:items-center mb-2">
           <ExerciseSearch
             v-model="searchQuery"
             placeholder="Buscar ejercicio..."
