@@ -98,6 +98,7 @@
   .input-select {
     @apply w-full appearance-none bg-accent-card border border-primary/40 text-primary placeholder:text-muted focus:ring-2 focus:ring-primary focus:border-primary rounded-lg py-2 px-3 pr-8 transition shadow-sm hover:border-primary/80;
   }
+
   .input-select option {
     @apply bg-accent-card text-primary;
   }
@@ -144,40 +145,50 @@
 }
 
 @keyframes globalFadeIn {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .global-animate-fadeIn {
-  animation: globalFadeIn 0.5s cubic-bezier(0.4,0,0.2,1);
+  animation: globalFadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 @keyframes cardPop {
   0% {
     opacity: 0;
     transform: scale(0.97) translateY(20px);
-    box-shadow: 0 2px 16px 0 rgba(59,130,246,0.05);
+    box-shadow: 0 2px 16px 0 rgba(59, 130, 246, 0.05);
   }
   70% {
     opacity: 1;
     transform: scale(1.025) translateY(-2px);
-    box-shadow: 0 8px 32px 0 rgba(59,130,246,0.10);
+    box-shadow: 0 8px 32px 0 rgba(59, 130, 246, 0.1);
   }
   100% {
     opacity: 1;
     transform: scale(1) translateY(0);
-    box-shadow: 0 4px 24px 0 rgba(59,130,246,0.08);
+    box-shadow: 0 4px 24px 0 rgba(59, 130, 246, 0.08);
   }
 }
 
 .card-animate-pop {
-  animation: cardPop 0.5s cubic-bezier(0.4,0,0.2,1);
+  animation: cardPop 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .card-hover-effect {
-  transition: box-shadow 0.3s cubic-bezier(0.4,0,0.2,1), transform 0.3s cubic-bezier(0.4,0,0.2,1);
+  transition:
+    box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .card-hover-effect:hover {
-  box-shadow: 0 10px 32px 0 rgba(59,130,246,0.18), 0 1.5px 8px 0 rgba(34,211,169,0.11);
+  box-shadow:
+    0 10px 32px 0 rgba(59, 130, 246, 0.18),
+    0 1.5px 8px 0 rgba(34, 211, 169, 0.11);
   transform: translateY(-4px) scale(1.035);
 }
