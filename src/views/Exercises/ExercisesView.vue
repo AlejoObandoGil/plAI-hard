@@ -44,11 +44,11 @@
 
 <script setup lang="ts">
 import { ref, onMounted, watch, onUnmounted } from 'vue'
-import { useExercisesStore, filters } from '../stores/exercises'
-import ExerciseFilters from '../components/exercise/ExerciseFilters.vue'
-import ExerciseCard from '../components/exercise/ExerciseCard.vue'
-import ExerciseSearch from '../components/exercise/ExerciseSearch.vue'
-import LoadingSpinner from '../components/LoadingSpinner.vue'
+import { useExercisesStore, filters } from '@/stores/exercises'
+import ExerciseFilters from '@/components/exercise/ExerciseFilters.vue'
+import ExerciseCard from '@/components/exercise/ExerciseCard.vue'
+import ExerciseSearch from '@/components/exercise/ExerciseSearch.vue'
+import LoadingSpinner from '@/components/LoadingSpinner.vue'
 
 const exercisesStore = useExercisesStore()
 const searchQuery = ref('')

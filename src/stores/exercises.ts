@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import { ref, reactive } from 'vue'
 import { supabase } from '../services/supabase'
 
-const SUPABASE_BUCKET = 'gym-app' // Cambia si tu bucket tiene otro nombre
+const SUPABASE_BUCKET = 'gym-app'
 function getPublicUrl(path: string) {
   const baseUrl = import.meta.env.VITE_SUPABASE_URL.replace(/^https?:\/\//, '')
   return `https://${baseUrl}/storage/v1/object/public/${SUPABASE_BUCKET}/exercises/${path}`

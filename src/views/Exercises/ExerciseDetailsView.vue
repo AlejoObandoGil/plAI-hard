@@ -85,8 +85,8 @@
 <script setup lang="ts">
 import { onMounted, computed } from 'vue'
 import { useRoute } from 'vue-router'
-import { useExercisesStore } from '../stores/exercises'
-import ExerciseGif from '../components/exercise/ExerciseGif.vue'
+import { useExercisesStore } from '@/stores/exercises'
+import ExerciseGif from '@/components/exercise/ExerciseGif.vue'
 
 const route = useRoute()
 const exercisesStore = useExercisesStore()

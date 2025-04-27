@@ -11,18 +11,38 @@ const router = createRouter({
     {
       path: '/exercises',
       name: 'exercises',
-      component: () => import('../views/ExercisesView.vue'),
+      component: () => import('../views/Exercises/ExercisesView.vue'),
     },
     {
       path: '/exercises/:id',
       name: 'exercise-details',
-      component: () => import('../views/ExerciseDetailsView.vue'),
+      component: () => import('../views/Exercises/ExerciseDetailsView.vue'),
       props: true,
     },
+    // {
+    //   path: '/my-routine',
+    //   name: 'my-routine',
+    //   component: () => import('../views/MyRoutineView.vue'),
+    // },
     {
-      path: '/my-routine',
-      name: 'my-routine',
-      component: () => import('../views/MyRoutineView.vue'),
+      path: '/training',
+      name: 'training',
+      component: () => import('../views/Training/TrainingView.vue'),
+    },
+    {
+      path: '/training/my-routines',
+      name: 'my-routines',
+      component: () => import('../views/Training/MyRoutinesView.vue'),
+    },
+    {
+      path: '/training/history',
+      name: 'history',
+      component: () => import('../views/Training/HistoryView.vue'),
+    },
+    {
+      path: '/training/progress',
+      name: 'progress',
+      component: () => import('../views/Training/ProgressView.vue'),
     },
     {
       path: '/login',

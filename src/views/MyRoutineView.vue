@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-accent-dark text-primary px-4 py-8">
+  <!-- <div class="min-h-screen bg-accent-dark text-primary px-4 py-8">
     <h1 class="mb-8">Mi Rutina Semanal</h1>
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -28,12 +28,8 @@
         </button>
       </div>
     </div>
-  </div>
+  </div> -->
+  <div></div>
 </template>
 
-<script setup lang="ts">
-import { useRoutineStore } from '../stores/routine'
-
-const routineStore = useRoutineStore()
-const { weeklyRoutine, removeExerciseFromDay, clearDay } = routineStore
-</script>
+<script setup lang="ts"></script>

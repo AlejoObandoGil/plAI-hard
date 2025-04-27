@@ -8,7 +8,12 @@
       <div class="w-64 bg-accent-card h-full shadow-xl p-6 flex flex-col animate-slide-in-right">
         <button class="self-end mb-6" @click="$emit('update:modelValue', false)">
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M6 18L18 6M6 6l12 12"
+            />
           </svg>
         </button>
         <template v-if="isAuthenticated">
@@ -19,14 +24,40 @@
             </div>
             <span class="text-primary font-semibold">{{ userEmail }}</span>
           </div>
-          <a href="#" class="block px-4 py-2 text-primary hover:bg-primary-light hover:text-secondary">Mi Perfil</a>
-          <a href="#" class="block px-4 py-2 text-primary hover:bg-primary-light hover:text-secondary">Configuración</a>
-          <button @click="logout" class="block w-full text-left px-4 py-2 text-primary hover:bg-primary-light hover:text-secondary">Cerrar Sesión</button>
+          <a
+            href="#"
+            class="block px-4 py-2 text-primary hover:bg-primary-light hover:text-secondary"
+            >Mi Perfil</a
+          >
+          <a
+            href="#"
+            class="block px-4 py-2 text-primary hover:bg-primary-light hover:text-secondary"
+            >Configuración</a
+          >
+          <button
+            @click="logout"
+            class="block w-full text-left px-4 py-2 text-primary hover:bg-primary-light hover:text-secondary"
+          >
+            Cerrar Sesión
+          </button>
         </template>
         <template v-else>
-          <button @click="goToLogin" class="block w-full px-4 py-2 text-primary hover:bg-primary-light hover:text-secondary rounded mb-2">
-            <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M5.121 17.804A8.966 8.966 0 0112 15c2.21 0 4.246.805 5.879 2.146M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+          <button
+            @click="goToLogin"
+            class="block w-full px-4 py-2 text-primary hover:bg-primary-light hover:text-secondary rounded mb-2"
+          >
+            <svg
+              class="w-5 h-5 inline mr-2"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M5.121 17.804A8.966 8.966 0 0112 15c2.21 0 4.246.805 5.879 2.146M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+              />
             </svg>
             Acceder
           </button>
@@ -64,6 +95,7 @@ function goToLogin() {
 
 function logout() {
   authStore.logout()
+  router.push('/login')
   emit('update:modelValue', false)
 }
 </script>

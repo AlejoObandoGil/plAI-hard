@@ -12,6 +12,10 @@ export default {
           DEFAULT: '#22D3A9', // Verde aqua lima
           dark: '#0E766E',
         },
+        tertiary: {
+          DEFAULT: '#a259f7', // Morado branding terciario
+          dark: '#6d28d9',
+        },
         accent: {
           DEFAULT: '#FFFFFF',
           dark: '#181A20', // Fondo principal
