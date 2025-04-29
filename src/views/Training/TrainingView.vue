@@ -5,6 +5,30 @@
     </h1>
     <div class="grid grid-cols-1 md:grid-cols-3 gap-8 w-full max-w-5xl">
       <TrainingCard
+        to="/training/start-session"
+        title="Empezar sesión"
+        description="Comienza una nueva sesión de entrenamiento."
+        icon-bg="bg-info"
+      >
+        <template #icon>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            class="w-10 h-10"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M4 15V9m16 6V9m-9 6h2m-8 0h2m10 0h2m-2-6h2m-8 0h2m4 0h2m-2 6h2"
+            />
+            <rect x="6" y="10" width="12" height="4" rx="1" fill="currentColor" />
+          </svg>
+        </template>
+      </TrainingCard>
+      <TrainingCard
         to="/training/my-routines"
         title="Mis Rutinas"
         description="Crea y gestiona tus rutinas personalizadas."

@@ -20,6 +20,7 @@ export default {
           DEFAULT: '#FFFFFF',
           dark: '#181A20', // Fondo principal
           card: '#23272F', // Fondo de cards/header
+          input: '#2E323A', // Fondo de inputs
         },
         muted: {
           DEFAULT: '#A0A0A0',
@@ -65,8 +66,8 @@ export default {
         inner: 'inset 0 2px 4px 0 rgba(0,0,0,0.06)',
       },
       fontSize: {
-        'xxs': '0.65rem',
-        'tiny': '0.8rem',
+        xxs: '0.65rem',
+        tiny: '0.8rem',
         '7xl': '5rem',
       },
       zIndex: {
@@ -75,7 +76,7 @@ export default {
         100: '100',
       },
       maxWidth: {
-        'xs': '20rem',
+        xs: '20rem',
         '3xl': '48rem',
         'screen-xl': '1280px',
       },

@@ -19,15 +19,15 @@ const router = createRouter({
       component: () => import('../views/Exercises/ExerciseDetailsView.vue'),
       props: true,
     },
-    // {
-    //   path: '/my-routine',
-    //   name: 'my-routine',
-    //   component: () => import('../views/MyRoutineView.vue'),
-    // },
     {
       path: '/training',
       name: 'training',
       component: () => import('../views/Training/TrainingView.vue'),
+    },
+    {
+      path: '/training/start-session',
+      name: 'start-session',
+      component: () => import('../views/Training/StartSessionView.vue'),
     },
     {
       path: '/training/my-routines',

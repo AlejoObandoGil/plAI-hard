@@ -1,7 +1,6 @@
 <template>
   <div class="min-h-screen text-primary px-4 py-8">
     <div class="container mx-auto px-4 py-4 flex flex-col lg:flex-row gap-5">
-      <!-- Sidebar filtros desktop / Drawer mobile -->
       <aside
         class="hidden lg:block w-full max-w-xs sticky top-8 self-start z-10 max-h-[calc(100vh-4rem)] overflow-y-auto custom-scrollbar"
       >
