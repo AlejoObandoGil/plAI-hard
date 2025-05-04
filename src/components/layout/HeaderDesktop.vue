@@ -24,12 +24,12 @@
             active-class="text-secondary"
             >Entrenamiento</router-link
           >
-          <router-link
+          <!-- <router-link
             to="/about"
             class="hover:text-secondary transition-colors"
             active-class="text-secondary"
             >Info</router-link
-          >
+          > -->
         </nav>
         <div class="col-start-3 flex justify-end">
           <template v-if="isAuthenticated">

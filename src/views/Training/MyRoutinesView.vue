@@ -1,7 +1,12 @@
 <template>
   <div class="min-h-[60vh] flex flex-col items-center justify-center py-8">
     <h2 class="text-2xl font-bold mb-6 text-blue-800">Mis Rutinas</h2>
-    <RoutineCrud :routines="mockRoutines" @create="openCreateModal" @edit="openEditModal" @delete="onDelete" />
+    <RoutineCrud
+      :routines="routines"
+      @create="openCreateModal"
+      @edit="openEditModal"
+      @delete="onDelete"
+    />
     <RoutineFormModal
       :visible="modalVisible"
       :routine="selectedRoutine"
@@ -10,58 +15,60 @@
     />
   </div>
 </template>
+
 <script setup lang="ts">
 import { ref } from 'vue'
+import { onMounted } from 'vue'
+import { useRoutinesStore } from '@/stores/routine'
 import RoutineCrud from '@/components/routines/RoutineCrud.vue'
 import RoutineFormModal from '@/components/routines/RoutineFormModal.vue'
+import type { Routine } from '@/types/routines'
 
-const mockRoutines = ref([
-  {
-    id: '1',
-    name: 'Rutina Full Body',
-    description: 'Entrenamiento completo para todo el cuerpo',
-    objective: 'Fuerza',
-    day_of_the_week: 'Lunes',
-    is_public: false,
-  },
-  {
-    id: '2',
-    name: 'Piernas y Glúteos',
-    description: 'Rutina enfocada en tren inferior',
-    objective: 'Hipertrofia',
-    day_of_the_week: 'Miércoles',
-    is_public: true,
-  },
-])
+const routinesStore = useRoutinesStore()
+const routines = routinesStore.routines
+const loading = routinesStore.loading
+const error = routinesStore.error
 
 const modalVisible = ref(false)
-const selectedRoutine = ref<any>(null)
+const selectedRoutine = ref<Routine | null>(null)
+
+onMounted(() => {
+  routinesStore.fetchRoutines()
+})
 
 function openCreateModal() {
   selectedRoutine.value = null
   modalVisible.value = true
 }
-function openEditModal(routine: any) {
+function openEditModal(routine: Routine) {
   selectedRoutine.value = routine
   modalVisible.value = true
 }
 function closeModal() {
   modalVisible.value = false
 }
-function onSaveRoutine(data: any) {
-  // Aquí irá la lógica real con Supabase
-  if (selectedRoutine.value) {
-    // Editar
-    const idx = mockRoutines.value.findIndex(r => r.id === selectedRoutine.value.id)
-    if (idx !== -1) mockRoutines.value[idx] = { ...selectedRoutine.value, ...data }
-  } else {
-    // Crear
-    mockRoutines.value.push({ ...data, id: Date.now().toString() })
+async function onSaveRoutine(data: RoutineFormData) {
+  try {
+    if (selectedRoutine.value) {
+      // Actualizar rutina
+      await routinesStore.updateRoutine(selectedRoutine.value.id, data)
+    } else {
+      // Crear nueva rutina
+      await routinesStore.createRoutine(data)
+    }
+    closeModal()
+  } catch (error) {
+    console.error('Error al guardar la rutina:', error)
   }
-  closeModal()
 }
-function onDelete(routine: any) {
-  // Aquí irá la lógica real con Supabase
-  mockRoutines.value = mockRoutines.value.filter(r => r.id !== routine.id)
+
+async function onDelete(routine: Routine) {
+  try {
+    if (confirm('¿Estás seguro de que quieres eliminar esta rutina?')) {
+      await routinesStore.deleteRoutine(routine.id)
+    }
+  } catch (error) {
+    console.error('Error al eliminar la rutina:', error)
+  }
 }
 </script>

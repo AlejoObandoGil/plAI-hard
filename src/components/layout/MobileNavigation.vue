@@ -42,7 +42,7 @@
         </svg>
         <span class="text-xs mt-1">Entrenamiento</span>
       </router-link>
-      <router-link to="/about" class="flex flex-col items-center p-2" active-class="text-secondary">
+      <!-- <router-link to="/about" class="flex flex-col items-center p-2" active-class="text-secondary">
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path
             stroke-linecap="round"
@@ -52,7 +52,7 @@
           />
         </svg>
         <span class="text-xs mt-1">Info</span>
-      </router-link>
+      </router-link> -->
     </div>
   </nav>
 </template>
