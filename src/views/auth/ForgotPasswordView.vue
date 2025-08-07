@@ -51,7 +51,9 @@
         {{ error }}
       </div>
       <div class="flex flex-col gap-2 mt-2 text-center">
-        <router-link to="/login" class="text-primary hover:underline">Volver a iniciar sesión</router-link>
+        <router-link to="/login" class="text-primary hover:underline"
+          >Volver a iniciar sesión</router-link
+        >
       </div>
     </div>
   </main>
@@ -79,11 +81,11 @@ watchEffect(() => {
 async function handleForgotPassword() {
   success.value = ''
   error.value = ''
-  const result = await authStore.forgotPassword(email.value)
-  if (result?.success) {
+  const result = await authStore.resetPassword(email.value)
+  if (result) {
     success.value = '¡Te hemos enviado un enlace de recuperación a tu correo!'
-  } else if (result?.error) {
-    error.value = result.error
+  } else if (authStore.error) {
+    error.value = authStore.error
   }
 }
 </script>

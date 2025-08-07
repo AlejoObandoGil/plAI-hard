@@ -73,8 +73,11 @@ import { useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useAuthStore } from '@/stores/auth'
 
-const props = defineProps<{ modelValue: boolean }>()
-defineEmits(['update:modelValue'])
+defineProps<{ modelValue: boolean }>()
+
+const emit = defineEmits<{
+  'update:modelValue': [value: boolean]
+}>()
 
 const router = useRouter()
 const authStore = useAuthStore()

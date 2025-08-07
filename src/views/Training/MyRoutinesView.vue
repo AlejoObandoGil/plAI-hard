@@ -22,12 +22,12 @@ import { onMounted } from 'vue'
 import { useRoutinesStore } from '@/stores/routine'
 import RoutineCrud from '@/components/routines/RoutineCrud.vue'
 import RoutineFormModal from '@/components/routines/RoutineFormModal.vue'
-import type { Routine } from '@/types/routines'
+import type { Routine, RoutineFormData } from '@/types/routines'
 
 const routinesStore = useRoutinesStore()
 const routines = routinesStore.routines
-const loading = routinesStore.loading
-const error = routinesStore.error
+// const loading = routinesStore.loading
+// const error = routinesStore.error
 
 const modalVisible = ref(false)
 const selectedRoutine = ref<Routine | null>(null)
