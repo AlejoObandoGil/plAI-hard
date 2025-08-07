@@ -81,7 +81,12 @@ export const useAuthStore = defineStore('auth', () => {
     loading.value = true
     error.value = null
     // Esto abrirá una ventana emergente o redirigirá al usuario al flujo de OAuth
-    const { error: oauthError } = await supabase.auth.signInWithOAuth({ provider })
+    const { error: oauthError } = await supabase.auth.signInWithOAuth({
+      provider,
+      options: {
+        redirectTo: window.location.origin,
+      },
+    })
     loading.value = false
     if (oauthError) {
       error.value = oauthError.message
