@@ -319,6 +319,25 @@ export const useRoutinesStore = defineStore('routines', () => {
       
       error.value = errorMsg
       throw err
+    }
+  }
+
+  async function getRoutineById(id: string): Promise<Routine | null> {
+    try {
+      loading.value = true
+      error.value = null
+
+      const { data, error: supabaseError } = await supabase
+        .from('routines')
+        .select('*')
+        .eq('id', id)
+        .single()
+
+      if (supabaseError) throw supabaseError
+      return data
+    } catch (err) {
+      error.value = err instanceof Error ? err.message : 'Error al obtener la rutina'
+      throw err
     } finally {
       loading.value = false
     }
@@ -328,10 +347,14 @@ export const useRoutinesStore = defineStore('routines', () => {
     routines: computed(() => routines.value),
     loading: computed(() => loading.value),
     error: computed(() => error.value),
-    selectedRoutine,
+    selectedRoutine: computed(() => selectedRoutine.value),
     fetchRoutines,
     createRoutine,
     updateRoutine,
-    deleteRoutine
+    deleteRoutine,
+    getRoutineById,
+    setSelectedRoutine: (routine: Routine | null) => {
+      selectedRoutine.value = routine
+    }
   }
 })

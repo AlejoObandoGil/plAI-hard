@@ -35,6 +35,12 @@ const router = createRouter({
       component: () => import('../views/Training/MyRoutinesView.vue'),
     },
     {
+      path: '/training/routines/:id',
+      name: 'routine-details',
+      component: () => import('../views/Training/Routine/RoutineShow.vue'),
+      props: true,
+    },
+    {
       path: '/training/history',
       name: 'history',
       component: () => import('../views/Training/HistoryView.vue'),
