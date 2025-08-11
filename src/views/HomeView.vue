@@ -15,8 +15,8 @@
           Explorar Ejercicios
         </h2>
         <p class="text-primary/70 flex-1">
-          Descubre nuestra amplia biblioteca de ejercicios y encuentra los que mejor se adapten a
-          tus objetivos.
+          Descubre una amplia biblioteca de ejercicios y encuentra los que mejor se adapten a tus
+          objetivos.
         </p>
         <span class="btn btn-ghost mt-6 self-end">Ir</span>
       </router-link>
