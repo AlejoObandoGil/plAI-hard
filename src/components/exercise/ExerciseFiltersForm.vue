@@ -8,42 +8,52 @@
     <div>
       <label class="block mb-1 font-semibold text-primary">Nivel</label>
       <select v-model="filters.level" class="input-select">
-        <option value="">Todos</option>
-        <option v-for="lvl in levels" :key="lvl" :value="lvl">{{ lvl }}</option>
+        <option value="">Selecciona nivel</option>
+        <option v-for="level in filterOptions.levels" :key="level" :value="level">
+          {{ level }}
+        </option>
       </select>
     </div>
     <div>
       <label class="block mb-1 font-semibold text-primary">Fuerza</label>
       <select v-model="filters.force" class="input-select">
-        <option value="">Todas</option>
-        <option v-for="f in forces" :key="f" :value="f">{{ f }}</option>
+        <option value="">Selecciona tipo de fuerza</option>
+        <option v-for="force in filterOptions.forces" :key="force" :value="force">
+          {{ force }}
+        </option>
       </select>
     </div>
     <div>
       <label class="block mb-1 font-semibold text-primary">Mecánica</label>
       <select v-model="filters.mechanic" class="input-select">
-        <option value="">Todas</option>
-        <option v-for="m in mechanics" :key="m" :value="m">{{ m }}</option>
+        <option value="">Selecciona mecánica</option>
+        <option v-for="mechanic in filterOptions.mechanics" :key="mechanic" :value="mechanic">
+          {{ mechanic }}
+        </option>
       </select>
     </div>
     <div>
       <label class="block mb-1 font-semibold text-primary">Equipamiento</label>
       <select v-model="filters.equipment" class="input-select">
-        <option value="">Todos</option>
-        <option v-for="eq in equipment" :key="eq" :value="eq">{{ eq }}</option>
+        <option value="">Selecciona equipo</option>
+        <option v-for="eq in filterOptions.equipment" :key="eq" :value="eq">
+          {{ eq }}
+        </option>
       </select>
     </div>
     <div>
       <label class="block mb-1 font-semibold text-primary">Categoría</label>
       <select v-model="filters.category" class="input-select">
-        <option value="">Todas</option>
-        <option v-for="cat in categories" :key="cat" :value="cat">{{ cat }}</option>
+        <option value="">Selecciona categoría</option>
+        <option v-for="category in filterOptions.categories" :key="category" :value="category">
+          {{ category }}
+        </option>
       </select>
     </div>
     <div>
       <label class="block mb-1 font-semibold text-primary">Músculos principales</label>
       <div class="flex flex-wrap gap-2">
-        <label v-for="muscle in muscles" :key="muscle" class="flex items-center gap-1 text-primary">
+        <label v-for="muscle in filterOptions.muscles" :key="muscle" class="flex items-center gap-1 text-primary">
           <input
             type="checkbox"
             :value="muscle"
@@ -76,34 +86,14 @@
 </template>
 
 <script setup lang="ts">
-import { filters } from '../../stores/exercises'
-import { ref, onMounted } from 'vue'
-import { supabase } from '../../services/supabase'
+import { useExercisesStore } from '../../stores/exercises'
+import { onMounted } from 'vue'
 
-const levels = ref<string[]>([])
-const forces = ref<string[]>([])
-const mechanics = ref<string[]>([])
-const equipment = ref<string[]>([])
-const categories = ref<string[]>([])
-const muscles = ref<string[]>([])
+const exercisesStore = useExercisesStore()
+const { filters, filterOptions } = exercisesStore
 
 onMounted(async () => {
-  // Cargar opciones de filtros desde la BD
-  const [levelsData, forcesData, mechanicsData, equipmentData, categoriesData, musclesData] =
-    await Promise.all([
-      supabase.from('levels').select('name'),
-      supabase.from('forces').select('name'),
-      supabase.from('mechanics').select('name'),
-      supabase.from('equipment').select('name'),
-      supabase.from('categories').select('name'),
-      supabase.from('muscles').select('name'),
-    ])
-  levels.value = (levelsData.data || []).map((l) => l.name)
-  forces.value = (forcesData.data || []).map((f) => f.name)
-  mechanics.value = (mechanicsData.data || []).map((m) => m.name)
-  equipment.value = (equipmentData.data || []).map((e) => e.name)
-  categories.value = (categoriesData.data || []).map((c) => c.name)
-  muscles.value = (musclesData.data || []).map((m) => m.name)
+  await exercisesStore.loadFilterOptions()
 })
 
 function resetFilters() {

@@ -5,7 +5,8 @@ import { supabase } from '../services/supabase'
 const SUPABASE_BUCKET = 'gym-app'
 function getPublicUrl(path: string) {
   const baseUrl = import.meta.env.VITE_SUPABASE_URL.replace(/^https?:\/\//, '')
-  return `https://${baseUrl}/storage/v1/object/public/${SUPABASE_BUCKET}/exercises/${path}`
+  const urlStorage = `https://${baseUrl}/storage/v1/object/public/${SUPABASE_BUCKET}/exercises/${path}`
+  return urlStorage
 }
 
 export interface Exercise {
@@ -16,9 +17,9 @@ export interface Exercise {
   mechanic: string | null
   equipment: string | null
   category: string | null
-  primaryMuscles: any[]
-  secondaryMuscles: any[]
-  instructions: any[]
+  primaryMuscles: string[]
+  secondaryMuscles: string[]
+  instructions: string[]
   images: string[]
 }
 
@@ -54,7 +55,7 @@ export const useExercisesStore = defineStore('exercises', () => {
     const from = page.value * limit.value
     const to = from + limit.value - 1
     let query = supabase
-      .from('exercises_search_view')
+      .from('exercises_search_view_spanish')
       .select('*')
       .order('name', { ascending: true })
       .range(from, to)
@@ -114,5 +115,50 @@ export const useExercisesStore = defineStore('exercises', () => {
     search.value = ''
   }
 
-  return { exercises, loading, error, fetchExercises, hasMore, resetExercises, search, filters }
+  // Obtener opciones para los filtros
+  const filterOptions = reactive({
+    levels: [] as string[],
+    forces: [] as string[],
+    mechanics: [] as string[],
+    equipment: [] as string[],
+    categories: [] as string[],
+    muscles: [] as string[],
+  })
+
+  // Cargar opciones de filtros
+  async function loadFilterOptions() {
+    try {
+      const [levels, forces, mechanics, equipment, categories, muscles] = await Promise.all([
+        supabase.from('levels').select('name_spanish'),
+        supabase.from('forces').select('name_spanish'),
+        supabase.from('mechanics').select('name_spanish'),
+        supabase.from('equipment').select('name_spanish'),
+        supabase.from('categories').select('name_spanish'),
+        supabase.from('muscles').select('name_spanish'),
+      ])
+
+      filterOptions.levels = (levels.data || []).map((l: any) => l.name_spanish)
+      filterOptions.forces = (forces.data || []).map((f: any) => f.name_spanish)
+      filterOptions.mechanics = (mechanics.data || []).map((m: any) => m.name_spanish)
+      filterOptions.equipment = (equipment.data || []).map((e: any) => e.name_spanish)
+      filterOptions.categories = (categories.data || []).map((c: any) => c.name_spanish)
+      filterOptions.muscles = (muscles.data || []).map((m: any) => m.name_spanish)
+    } catch (error) {
+      console.error('Error cargando opciones de filtro:', error)
+      throw error
+    }
+  }
+
+  return { 
+    exercises, 
+    loading, 
+    error, 
+    fetchExercises, 
+    hasMore, 
+    resetExercises, 
+    search, 
+    filters,
+    filterOptions,
+    loadFilterOptions
+  }
 })
