@@ -9,6 +9,11 @@ function getPublicUrl(path: string) {
   return urlStorage
 }
 
+export interface ExerciseInstruction {
+  stepNumber: number
+  instruction: string
+}
+
 export interface Exercise {
   id: string
   name: string
@@ -19,7 +24,7 @@ export interface Exercise {
   category: string | null
   primaryMuscles: string[]
   secondaryMuscles: string[]
-  instructions: string[]
+  instructions: ExerciseInstruction[]
   images: string[]
 }
 

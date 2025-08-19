@@ -41,10 +41,10 @@
           </div>
 
           <div class="mb-4">
-            <span class="font-semibold text-sm text-primary">Músculos principales:</span>
+            <span class="font-semibold text-sm text-primary">Músculos principales: </span>
             <span class="text-sm text-secondary">
-              <span v-for="pm in exercise.primaryMuscles" :key="pm.muscles?.name">
-                {{ pm.muscles?.name }}<br />
+              <span class="text-sm">
+                {{ exercise.primaryMuscles.join(', ') }}
               </span>
             </span>
           </div>
@@ -52,41 +52,67 @@
             v-if="exercise.secondaryMuscles && exercise.secondaryMuscles.length > 0"
             class="mb-4"
           >
-            <span class="font-semibold text-sm text-info">Músculos secundarios:</span>
+            <span class="font-semibold text-sm text-info">Músculos secundarios: </span>
             <span class="text-sm text-info/80">
-              <span v-for="sm in exercise.secondaryMuscles" :key="sm.muscles?.name">
-                {{ sm.muscles?.name }}<br />
-              </span>
+              {{ exercise.secondaryMuscles.join(', ') }}
             </span>
           </div>
 
           <div v-if="exercise.instructions && exercise.instructions.length > 0" class="mb-4">
             <h2 class="font-semibold text-sm mb-1 text-accent">Instrucciones:</h2>
             <ol class="list-decimal ml-6 text-accent/80">
-              <li v-for="step in exercise.instructions" :key="step.step_number">
+              <li v-for="(step, index) in exercise.instructions" :key="index">
                 {{ step.instruction }}
               </li>
             </ol>
           </div>
 
-          <button @click="addToRoutine" class="btn btn-secondary w-full mt-4">
-            Agregar a mi rutina
-          </button>
+          <div class="space-y-2">
+            <button @click="addToRoutine" class="btn btn-primary w-full">
+              Agregar a mi rutina
+            </button>
+
+            <transition
+              enter-active-class="transition-opacity duration-300"
+              enter-from-class="opacity-0"
+              enter-to-class="opacity-100"
+              leave-active-class="transition-opacity duration-300"
+              leave-from-class="opacity-100"
+              leave-to-class="opacity-0"
+            >
+              <div
+                v-if="showSuccess"
+                class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative"
+                role="alert"
+              >
+                <span class="block sm:inline">¡Ejercicio agregado a la rutina exitosamente!</span>
+              </div>
+            </transition>
+          </div>
         </div>
       </div>
 
       <router-link to="/exercises" class="mt-6 inline-block text-blue-500 hover:text-blue-700">
         ← Volver a la lista de ejercicios
       </router-link>
+
+      <ExerciseRoutineFormModal
+        v-if="showRoutineModal && exercise"
+        :visible="showRoutineModal"
+        :exercise-id="exercise.id"
+        @close="showRoutineModal = false"
+        @saved="onExerciseAddedToRoutine"
+      />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { onMounted, computed } from 'vue'
+import { onMounted, computed, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { useExercisesStore } from '@/stores/exercises'
 import ExerciseGif from '@/components/exercise/ExerciseGif.vue'
+import ExerciseRoutineFormModal from '@/components/exerciseRoutine/ExerciseRoutineFormModal.vue'
 
 const route = useRoute()
 const exercisesStore = useExercisesStore()
@@ -97,9 +123,19 @@ const exercise = computed(() => {
   return exercisesStore.exercises.find((e) => e.id === route.params.id)
 })
 
-const addToRoutine = () => {
-  // Aquí puedes implementar la lógica para agregar el ejercicio a la rutina
-  alert('Próximamente: agregar a rutina')
+const showRoutineModal = ref(false)
+const showSuccess = ref(false)
+
+function addToRoutine() {
+  showRoutineModal.value = true
+}
+
+function onExerciseAddedToRoutine() {
+  showSuccess.value = true
+  // Ocultar el mensaje después de 3 segundos
+  setTimeout(() => {
+    showSuccess.value = false
+  }, 3000)
 }
 
 onMounted(() => {

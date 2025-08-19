@@ -87,7 +87,7 @@
 </template>
 
 <script setup lang="ts">
-import type { Routine } from '../../../types/routines'
+import type { Routine } from '@/types/routines'
 import { RouterLink } from 'vue-router'
 
 defineProps<{
