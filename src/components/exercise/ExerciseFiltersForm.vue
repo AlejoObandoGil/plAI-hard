@@ -53,7 +53,11 @@
     <div>
       <label class="block mb-1 font-semibold text-primary">Músculos principales</label>
       <div class="flex flex-wrap gap-2">
-        <label v-for="muscle in filterOptions.muscles" :key="muscle" class="flex items-center gap-1 text-primary">
+        <label
+          v-for="muscle in filterOptions.muscles"
+          :key="muscle"
+          class="flex items-center gap-1 text-primary"
+        >
           <input
             type="checkbox"
             :value="muscle"
@@ -68,7 +72,7 @@
       <label class="block mb-1 font-semibold text-primary">Músculos secundarios</label>
       <div class="flex flex-wrap gap-2">
         <label
-          v-for="muscle in muscles"
+          v-for="muscle in filterOptions.muscles"
           :key="muscle + '-sec'"
           class="flex items-center gap-1 text-primary"
         >

@@ -32,12 +32,12 @@ const router = createRouter({
     {
       path: '/training/my-routines',
       name: 'my-routines',
-      component: () => import('../views/Training/MyRoutinesView.vue'),
+      component: () => import('../views/Training/Routine/RoutineView.vue'),
     },
     {
       path: '/training/routines/:id',
       name: 'routine-details',
-      component: () => import('../views/Training/Routine/RoutineShow.vue'),
+      component: () => import('../views/Training/Routine/RoutineDetailView.vue'),
       props: true,
     },
     {
