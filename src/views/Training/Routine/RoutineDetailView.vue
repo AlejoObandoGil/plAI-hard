@@ -40,6 +40,15 @@
 
     <!-- Detalles de la rutina -->
     <div v-else-if="routine" class="max-w-3xl mx-auto">
+      <!-- Modal de edición de ejercicio -->
+      <ExerciseRoutineFormModal
+        v-if="showEditModal && currentExercise"
+        :visible="showEditModal"
+        :exercise-id="currentExercise.exerciseId"
+        :routine-exercise="currentExercise"
+        @close="showEditModal = false"
+        @saved="handleExerciseSaved"
+      />
       <div class="bg-accent-card border border-white/10 rounded-2xl shadow-xl overflow-hidden">
         <!-- Encabezado -->
         <div class="bg-gradient-to-r from-primary/10 to-secondary/10 p-6">
@@ -97,69 +106,14 @@
 
             <!-- Lista de ejercicios -->
             <div v-if="exercises.length > 0" class="space-y-4">
-              <div
+              <ExerciseRoutineCard
                 v-for="(exercise, index) in exercises"
                 :key="exercise.id"
-                class="bg-accent-dark/50 rounded-lg p-4 border border-white/5 hover:border-primary/30 transition-colors"
-              >
-                <div class="flex items-start justify-between">
-                  <div>
-                    <h3 class="font-semibold text-lg text-white">
-                      {{ index + 1 }}. {{ exercise.exercises?.name || 'Ejercicio sin nombre' }}
-                    </h3>
-                    <div class="flex gap-4 mt-2 text-sm text-gray-300">
-                      <span v-if="exercise.sets">{{ exercise.sets }} series</span>
-                      <span v-if="exercise.reps">{{ exercise.reps }} repeticiones</span>
-                      <span v-if="exercise.weight">{{ exercise.weight }} kg</span>
-                    </div>
-                    <p v-if="exercise.notes" class="text-sm text-gray-400 mt-2">
-                      {{ exercise.notes }}
-                    </p>
-                  </div>
-                  <div class="flex gap-2">
-                    <button
-                      @click="editExercise(exercise)"
-                      class="p-1.5 text-gray-400 hover:text-primary transition-colors"
-                      title="Editar ejercicio"
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        class="h-5 w-5"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          stroke-width="2"
-                          d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-                        />
-                      </svg>
-                    </button>
-                    <button
-                      @click="removeExercise(exercise.id)"
-                      class="p-1.5 text-gray-400 hover:text-red-500 transition-colors"
-                      title="Eliminar ejercicio"
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        class="h-5 w-5"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          stroke-width="2"
-                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                        />
-                      </svg>
-                    </button>
-                  </div>
-                </div>
-              </div>
+                :exercise="exercise"
+                :index="index"
+                @edit="editExercise"
+                @remove="removeExercise"
+              />
             </div>
             <div v-else class="text-center py-8">
               <p class="text-gray-400">
@@ -175,14 +129,19 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import { useToast, POSITION } from 'vue-toastification'
 import { useRoute, useRouter } from 'vue-router'
 import { useRoutinesStore } from '@/stores/routine'
+import DeleteConfirmationToast from '@/components/commons/DeleteConfirmationToast.vue'
 import { useExerciseRoutineStore } from '@/stores/exerciseRoutine'
 import type { Routine } from '@/types/routines'
 import type { RoutineExercise } from '@/types/exerciseRoutine'
+import ExerciseRoutineCard from '@/components/exerciseRoutine/ExerciseRoutineCard.vue'
+import ExerciseRoutineFormModal from '@/components/exerciseRoutine/ExerciseRoutineFormModal.vue'
 
 const route = useRoute()
 const router = useRouter()
+const toast = useToast()
 const routinesStore = useRoutinesStore()
 const exerciseRoutineStore = useExerciseRoutineStore()
 
@@ -190,6 +149,8 @@ const routine = ref<Routine | null>(null)
 const exercises = ref<RoutineExercise[]>([])
 const loading = ref(true)
 const error = ref<string | null>(null)
+const showEditModal = ref(false)
+const currentExercise = ref<RoutineExercise | null>(null)
 
 async function fetchRoutine() {
   try {
@@ -230,25 +191,71 @@ function addExercise() {
   })
 }
 
-function editExercise(exercise: RoutineExercise) {
-  // Aquí puedes implementar la lógica para editar un ejercicio
-  console.log('Editar ejercicio:', exercise)
+const editExercise = (exercise: RoutineExercise) => {
+  // Asegurarse de que tenemos los campos correctos para la edición
+  currentExercise.value = {
+    ...exercise,
+    // Asegurar que los campos opcionales tengan valores por defecto
+    routineId: exercise.routineId || exercise.routine_id || '',
+    exerciseId: exercise.exerciseId || exercise.exercise_id || '',
+    restSeconds: exercise.restSeconds ?? exercise.rest_seconds ?? null,
+    createdAt: exercise.createdAt || exercise.created_at || new Date().toISOString(),
+    updatedAt: exercise.updatedAt || exercise.updated_at || null,
+  }
+  showEditModal.value = true
+}
+
+async function handleExerciseSaved() {
+  showEditModal.value = false
+  currentExercise.value = null
+  if (routine.value?.id) {
+    const routineExercises = await exerciseRoutineStore.getRoutineExercises(routine.value.id)
+    exercises.value = routineExercises || []
+  }
 }
 
 async function removeExercise(exerciseId: string) {
-  if (!confirm('¿Estás seguro de que quieres eliminar este ejercicio de la rutina?')) return
+  const toast = useToast()
 
-  try {
-    await exerciseRoutineStore.removeExerciseFromRoutine(exerciseId)
-    // Actualizar la lista de ejercicios después de eliminar
-    if (routine.value?.id) {
-      const routineExercises = await exerciseRoutineStore.getRoutineExercises(routine.value.id)
-      exercises.value = routineExercises || []
-    }
-  } catch (err) {
-    console.error('Error al eliminar el ejercicio:', err)
-    alert('No se pudo eliminar el ejercicio. Por favor, inténtalo de nuevo.')
-  }
+  toast.error(
+    {
+      component: DeleteConfirmationToast,
+      props: {
+        message: '¿Estás seguro de que quieres eliminar este ejercicio de la rutina?',
+        confirmText: 'Eliminar',
+        cancelText: 'Cancelar',
+      },
+      listeners: {
+        confirm: async () => {
+          try {
+            await exerciseRoutineStore.removeExerciseFromRoutine(exerciseId)
+            // Actualizar la lista de ejercicios después de eliminar
+            if (routine.value?.id) {
+              const routineExercises = await exerciseRoutineStore.getRoutineExercises(
+                routine.value.id,
+              )
+              exercises.value = routineExercises || []
+            }
+            toast.success('Ejercicio eliminado correctamente')
+          } catch (err) {
+            console.error('Error al eliminar el ejercicio:', err)
+            toast.error('No se pudo eliminar el ejercicio. Por favor, inténtalo de nuevo.')
+          }
+        },
+        cancel: () => {
+          toast.clear()
+        },
+      },
+    },
+    {
+      position: POSITION.TOP_CENTER,
+      timeout: false,
+      closeOnClick: false,
+      closeButton: false,
+      draggable: false,
+      hideProgressBar: true,
+    },
+  )
 }
 
 onMounted(() => {

@@ -17,6 +17,7 @@ export interface ExerciseInstruction {
 export interface Exercise {
   id: string
   name: string
+  nameSpanish: string
   level: string | null
   force: string | null
   mechanic: string | null
@@ -87,6 +88,7 @@ export const useExercisesStore = defineStore('exercises', () => {
       const newExercises = (data || []).map((ex: any) => ({
         id: ex.id,
         name: ex.name,
+        nameSpanish: ex.name_spanish || null,
         level: ex.level || null,
         force: ex.force || null,
         mechanic: ex.mechanic || null,
@@ -154,16 +156,16 @@ export const useExercisesStore = defineStore('exercises', () => {
     }
   }
 
-  return { 
-    exercises, 
-    loading, 
-    error, 
-    fetchExercises, 
-    hasMore, 
-    resetExercises, 
-    search, 
+  return {
+    exercises,
+    loading,
+    error,
+    fetchExercises,
+    hasMore,
+    resetExercises,
+    search,
     filters,
     filterOptions,
-    loadFilterOptions
+    loadFilterOptions,
   }
 })

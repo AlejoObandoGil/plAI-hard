@@ -24,7 +24,9 @@
             />
           </svg>
         </button>
-        <h3 class="text-xl font-bold mb-4 text-primary">Agregar a mi rutina</h3>
+        <h3 class="text-xl font-bold mb-4 text-primary">
+          {{ isEditing ? 'Editar ejercicio' : 'Agregar a mi rutina' }}
+        </h3>
         <p v-if="error" class="text-error text-sm mb-4">{{ error }}</p>
         <form @submit.prevent="onSubmit" class="flex flex-col gap-3 sm:gap-4">
           <div>
@@ -180,60 +182,112 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 import { supabase } from '../../services/supabase'
+import { useToast } from 'vue-toastification'
+
+import type { RoutineExercise } from '../../types/exerciseRoutine'
 
 const props = defineProps<{
   visible: boolean
   exerciseId: string
+  routineExercise?: RoutineExercise
 }>()
 
 const emit = defineEmits(['close', 'saved'])
 
+const loading = ref(false)
+const error = ref<string | null>(null)
+const toast = useToast()
+const form = ref<{
+  routineId: string
+  sets: number | null
+  reps: number | null
+  weight: number | null
+  tempo: string | null
+  restSeconds: number | null
+  order: number | null
+  notes: string | null
+}>({
+  routineId: '',
+  sets: 3,
+  reps: 10,
+  weight: null,
+  tempo: null,
+  restSeconds: 60,
+  order: 1,
+  notes: null,
+})
+
+const isEditing = computed(() => !!props.routineExercise)
+
 interface Routine {
   id: string
   name: string
-  description: string | null
-  objective: string | null
-  dayOfTheWeek: string | null
-  isPublic?: boolean
-  createdAt: string
-  updatedAt: string | null
+  description?: string
+  userId: string
 }
 
-const loading = ref(false)
-const error = ref<string | null>(null)
 const routines = ref<Routine[]>([])
-
-const form = ref({
-  routineId: '',
-  sets: null as number | null,
-  reps: null as number | null,
-  weight: null as number | null,
-  tempo: '',
-  restSeconds: null as number | null,
-  order: null as number | null,
-  notes: '',
-})
 
 const formErrors = ref<Record<string, string>>({})
 
-onMounted(async () => {
-  await loadRoutines()
-})
+onMounted(loadRoutines)
+
+watch(
+  () => props.routineExercise,
+  (newValue) => {
+    if (newValue) {
+      form.value = {
+        routineId: newValue.routineId || newValue.routine_id,
+        sets: newValue.sets,
+        reps: newValue.reps,
+        weight: newValue.weight,
+        tempo: newValue.tempo,
+        restSeconds: newValue.restSeconds || newValue.rest_seconds,
+        order: newValue.order,
+        notes: newValue.notes,
+      }
+
+      // Si estamos en modo edición y no hay exerciseId, intentamos cargar los datos
+      if (!props.exerciseId) {
+        form.value.routineId = newValue.routineId
+      }
+    } else {
+      form.value = {
+        routineId: '',
+        sets: null,
+        reps: null,
+        weight: null,
+        tempo: null,
+        restSeconds: null,
+        order: null,
+        notes: null,
+      }
+    }
+  },
+  { immediate: true },
+)
 
 async function loadRoutines() {
   try {
     loading.value = true
     error.value = null
 
-    const { data, error: fetchError } = await supabase
+    const { data: routinesData, error: fetchError } = await supabase
       .from('routines')
       .select('*')
       .order('created_at', { ascending: false })
 
     if (fetchError) throw fetchError
-    routines.value = data || []
+
+    // Map database fields to our TypeScript interface
+    routines.value = (routinesData || []).map((routine) => ({
+      id: routine.id,
+      name: routine.name,
+      description: routine.description,
+      userId: routine.user_id || routine.userId || '',
+    }))
   } catch (err) {
     console.error('Error loading routines:', err)
     error.value = err instanceof Error ? err.message : 'Error al cargar las rutinas'
@@ -266,7 +320,11 @@ function validateForm() {
     errors.weight = 'El peso no puede ser negativo'
   }
 
-  if (form.value.restSeconds !== null && form.value.restSeconds !== undefined && form.value.restSeconds < 0) {
+  if (
+    form.value.restSeconds !== null &&
+    form.value.restSeconds !== undefined &&
+    form.value.restSeconds < 0
+  ) {
     errors.restSeconds = 'El tiempo de descanso no puede ser negativo'
   }
 
@@ -287,29 +345,46 @@ async function onSubmit() {
     loading.value = true
     error.value = null
 
-    const { data, error: insertError } = await supabase
-      .from('routine_exercises')
-      .insert({
-        routine_id: form.value.routineId,
-        exercise_id: props.exerciseId,
-        sets: form.value.sets,
-        reps: form.value.reps,
-        weight: form.value.weight,
-        tempo: form.value.tempo || null,
-        rest_seconds: form.value.restSeconds,
-        notes: form.value.notes || null,
-        order: form.value.order,
-      })
-      .select()
-      .single()
+    const routineExerciseData = {
+      routine_id: form.value.routineId,
+      exercise_id: props.exerciseId,
+      sets: form.value.sets,
+      reps: form.value.reps,
+      weight: form.value.weight,
+      tempo: form.value.tempo || null,
+      rest_seconds: form.value.restSeconds,
+      order: form.value.order,
+      notes: form.value.notes || null,
+    }
 
-    if (insertError) throw insertError
+    if (isEditing.value && props.routineExercise) {
+      // Actualizar ejercicio existente
+      const { error: updateError } = await supabase
+        .from('routine_exercises')
+        .update(routineExerciseData)
+        .eq('id', props.routineExercise.id)
+        .select()
 
-    emit('saved', data)
+      if (updateError) throw updateError
+      toast.success('Ejercicio actualizado correctamente')
+    } else {
+      // Crear nuevo ejercicio
+      const { error: insertError } = await supabase
+        .from('routine_exercises')
+        .insert([routineExerciseData])
+        .select()
+
+      if (insertError) throw insertError
+      toast.success('Ejercicio agregado a la rutina')
+    }
+
+    emit('saved')
     emit('close')
   } catch (err) {
-    console.error('Error adding exercise to routine:', err)
-    error.value = err instanceof Error ? err.message : 'Error al agregar el ejercicio a la rutina'
+    console.error('Error al guardar el ejercicio:', err)
+    const errorMessage = err instanceof Error ? err.message : 'Error al guardar el ejercicio. Por favor, inténtalo de nuevo.'
+    error.value = errorMessage
+    toast.error(errorMessage)
   } finally {
     loading.value = false
   }

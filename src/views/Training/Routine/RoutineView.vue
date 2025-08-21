@@ -17,10 +17,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-import { onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRoutinesStore } from '@/stores/routine'
-import { useToast } from 'vue-toastification'
+import { useToast, POSITION } from 'vue-toastification'
+import DeleteConfirmationToast from '@/components/commons/DeleteConfirmationToast.vue'
 import RoutineCrud from '@/components/routines/RoutineCrud.vue'
 import RoutineFormModal from '@/components/routines/RoutineFormModal.vue'
 import type { Routine, RoutineFormData } from '@/types/routines'
@@ -64,71 +64,40 @@ async function onSaveRoutine(data: RoutineFormData) {
     toast.error('Error al guardar la rutina. Por favor, inténtalo de nuevo.')
   }
 }
-
 async function onDelete(routine: Routine) {
-  try {
-    // Mostrar confirmación con toast personalizado
-    const confirmed = await new Promise<boolean>((resolve) => {
-      const toastId = toast.warning('¿Estás seguro de que quieres eliminar esta rutina?', {
-        timeout: false,
-        closeOnClick: false,
-        pauseOnFocusLoss: true,
-        pauseOnHover: true,
-        draggable: true,
-        draggablePercent: 0.6,
-        showCloseButtonOnHover: false,
-        hideProgressBar: true,
-        closeButton: false,
-        icon: 'warning',
-        onClick: () => {
-          // Evitar que el toast se cierre al hacer clic
+  const toast = useToast()
+
+  toast.warning(
+    {
+      component: DeleteConfirmationToast,
+      props: {
+        message: '¿Estás seguro de que quieres eliminar esta rutina?',
+        confirmText: 'Eliminar',
+        cancelText: 'Cancelar',
+      },
+      listeners: {
+        confirm: async () => {
+          try {
+            await routinesStore.deleteRoutine(routine.id)
+            toast.success('Rutina eliminada correctamente')
+          } catch (error) {
+            console.error('Error al eliminar la rutina:', error)
+            toast.error('No se pudo eliminar la rutina. Por favor, inténtalo de nuevo.')
+          }
         },
-        onClose: () => {
-          // Resolver como falso si se cierra sin seleccionar una opción
-          resolve(false)
-        }
-      })
-
-      // Crear contenedor para los botones
-      const buttonsContainer = document.createElement('div')
-      buttonsContainer.className = 'flex gap-2 mt-2 justify-end'
-
-      // Botón de confirmar
-      const confirmButton = document.createElement('button')
-      confirmButton.className = 'btn btn-error btn-sm'
-      confirmButton.textContent = 'Sí, eliminar'
-      confirmButton.onclick = () => {
-        toast.dismiss(toastId)
-        resolve(true)
-      }
-
-      // Botón de cancelar
-      const cancelButton = document.createElement('button')
-      cancelButton.className = 'btn btn-ghost btn-sm'
-      cancelButton.textContent = 'Cancelar'
-      cancelButton.onclick = () => {
-        toast.dismiss(toastId)
-        resolve(false)
-      }
-
-      // Agregar botones al contenedor
-      buttonsContainer.appendChild(confirmButton)
-      buttonsContainer.appendChild(cancelButton)
-
-      // Agregar botones al toast
-      const toastElement = document.querySelector(`#${toastId}`)
-      if (toastElement) {
-        toastElement.appendChild(buttonsContainer)
-      }
-    })
-
-    if (confirmed) {
-      await routinesStore.deleteRoutine(routine.id)
-      toast.success('Rutina eliminada correctamente')
-    }
-  } catch (error) {
-    console.error('Error al eliminar la rutina:', error)
-    toast.error('Error al eliminar la rutina. Por favor, inténtalo de nuevo.')
-  }
+        cancel: () => {
+          toast.clear()
+        },
+      },
+    },
+    {
+      position: POSITION.TOP_CENTER,
+      timeout: false,
+      closeOnClick: false,
+      closeButton: false,
+      draggable: false,
+      hideProgressBar: true,
+    },
+  )
 }
 </script>

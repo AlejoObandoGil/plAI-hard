@@ -57,7 +57,7 @@ export const useExerciseRoutineStore = defineStore('exerciseRoutine', () => {
         .from('routine_exercises')
         .select(`
           *,
-          exercises (*)
+          exercise:exercises(*)
         `)
         .eq('routine_id', routineId)
         .order('order', { ascending: true })
