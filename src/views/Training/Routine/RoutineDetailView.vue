@@ -86,20 +86,7 @@
                 @click="addExercise"
                 class="flex items-center gap-2 px-3 py-2 bg-primary/10 text-primary rounded-lg hover:bg-primary/20 transition"
               >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="w-5 h-5"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M12 4v16m8-8H4"
-                  />
-                </svg>
+                <PlusIcon class="w-5 h-5" />
                 Agregar ejercicio
               </button>
             </div>
@@ -138,6 +125,7 @@ import type { Routine } from '@/types/routines'
 import type { RoutineExercise } from '@/types/exerciseRoutine'
 import ExerciseRoutineCard from '@/components/exerciseRoutine/ExerciseRoutineCard.vue'
 import ExerciseRoutineFormModal from '@/components/exerciseRoutine/ExerciseRoutineFormModal.vue'
+import { PlusIcon } from '@heroicons/vue/24/outline'
 
 const route = useRoute()
 const router = useRouter()
