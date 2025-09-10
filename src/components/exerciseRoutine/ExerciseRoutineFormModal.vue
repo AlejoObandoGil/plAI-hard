@@ -239,12 +239,12 @@ watch(
   (newValue) => {
     if (newValue) {
       form.value = {
-        routineId: newValue.routineId || newValue.routine_id,
+        routineId: newValue.routineId || newValue.routine_id || '',
         sets: newValue.sets,
         reps: newValue.reps,
         weight: newValue.weight,
         tempo: newValue.tempo,
-        restSeconds: newValue.restSeconds || newValue.rest_seconds,
+        restSeconds: newValue.restSeconds ?? newValue.rest_seconds ?? null,
         order: newValue.order,
         notes: newValue.notes,
       }
